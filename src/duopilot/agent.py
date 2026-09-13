@@ -9,6 +9,7 @@ from agents.mcp import MCPServerStdio
 
 from .config import Settings
 from .prompts import DUOPILOT_INSTRUCTIONS
+from .tools import create_local_tools
 
 
 @asynccontextmanager
@@ -44,6 +45,7 @@ def build_agent(settings: Settings, project_path: Path, mcp_server=None) -> Agen
         "name": "DuoPilot",
         "instructions": instructions,
         "model": settings.model,
+        "tools": create_local_tools(project_path, settings.allow_writes),
     }
     if mcp_server is not None:
         kwargs["mcp_servers"] = [mcp_server]
@@ -52,6 +54,7 @@ def build_agent(settings: Settings, project_path: Path, mcp_server=None) -> Agen
 
 
 async def run_duopilot(project_path: Path, task: str, settings: Settings) -> str:
+    project_path = project_path.resolve()
     async with xcode_mcp(settings) as server:
         agent = build_agent(settings, project_path, server)
         result = await Runner.run(agent, task)

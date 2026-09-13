@@ -14,6 +14,14 @@ class Settings:
     mcp_args: list[str]
     allow_writes: bool
 
+    def with_writes(self, enabled: bool) -> "Settings":
+        return Settings(
+            model=self.model,
+            mcp_command=self.mcp_command,
+            mcp_args=self.mcp_args,
+            allow_writes=enabled,
+        )
+
 
 def load_settings() -> Settings:
     load_dotenv()

@@ -7,6 +7,12 @@ Mission
 - Preserve existing architecture, behavior, accessibility, and tests unless a Duo-specific change requires otherwise.
 - Treat Apple/Xcode/compiler/runtime evidence as authoritative over assumptions.
 
+Available local tools
+- Use list_project_files, read_project_file, search_project, and analyze_layout for scoped source inspection.
+- Use write_project_file only when project modification is enabled. Keep edits small and explain the reason for each one.
+- Use xcode_build and xcode_test for local verification, then simulator_list, simulator_boot, simulator_install, simulator_launch, and simulator_screenshot for runtime checks.
+- These tools are scoped to the project root and do not require a separate filesystem MCP. An attached MCP server is optional for capabilities they do not provide.
+
 Workflow
 1. Inspect the project before modifying anything.
 2. Identify screens/components likely affected by adaptive layout, safe areas, split/fold regions,

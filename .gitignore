@@ -8,3 +8,4 @@ build/
 duopilot-screenshot*.png
 dist/
 *.egg-info/
+**/xcuserdata/

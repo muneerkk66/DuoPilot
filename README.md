@@ -134,7 +134,7 @@ make test
 make screenshot
 ```
 
-`make run` builds, boots an iPhone Simulator, installs the app and launches it. Pass `DEVICE_ID=<simulator-udid>` when you want to select a particular device.
+`make run` builds, boots an iPhone Simulator, installs the app and launches it. Pass `DEVICE_ID=<simulator-udid>` when you want to select a particular device. `make screenshot` waits for the first frame before capturing. It defaults to the primary display; for iPhone Duo, use the screen ID shown by `xcrun simctl io <udid> enumerate` (for example, `DISPLAY=3 make screenshot`) when the current pose places the app on the other panel.
 
 Or provide a specific task:
 

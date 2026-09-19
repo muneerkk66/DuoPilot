@@ -3,6 +3,7 @@ from __future__ import annotations
 import fnmatch
 import re
 import subprocess
+import time
 from pathlib import Path
 from typing import Any, Callable
 
@@ -242,11 +243,26 @@ def create_local_tools(root: Path, allow_writes: bool) -> list[Callable[..., Any
         return _run(["xcrun", "simctl", "install", "booted", str(target)], cwd=root, timeout=120)
 
     @function_tool
-    def simulator_screenshot(output_path: str = "duopilot-screenshot.png") -> str:
-        """Capture a screenshot from the booted simulator into the project root."""
+    def simulator_screenshot(
+        output_path: str = "duopilot-screenshot.png",
+        display: str = "primary",
+        delay_seconds: int = 2,
+    ) -> str:
+        """Capture a screenshot from a simulator display into the project root.
+
+        Duo has more than one display, so the primary display is selected by default.
+        Pass a screen ID, name, or device name such as ``3`` or ``primary-1`` to inspect
+        another display explicitly.
+        """
         target = _safe_path(root, output_path)
         target.parent.mkdir(parents=True, exist_ok=True)
-        return _run(["xcrun", "simctl", "io", "booted", "screenshot", str(target)], cwd=root, timeout=120)
+        if delay_seconds > 0:
+            time.sleep(min(delay_seconds, 10))
+        return _run(
+            ["xcrun", "simctl", "io", "booted", "screenshot", "--display", display, str(target)],
+            cwd=root,
+            timeout=120,
+        )
 
     return [
         list_project_files,

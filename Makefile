@@ -9,6 +9,8 @@ DUOPILOT ?= .venv/bin/duopilot
 
 # Prefer a booted iPhone, otherwise select the first available iPhone.
 DEVICE_ID ?= $(shell xcrun simctl list devices available 2>/dev/null | awk '/iPhone / && /Booted/ {for (i=1;i<=NF;i++) if ($$i ~ /^\([0-9A-F-]+\)$$/) {gsub(/[()]/,"",$$i); print $$i; exit}} /iPhone / && /Shutdown/ {for (i=1;i<=NF;i++) if ($$i ~ /^\([0-9A-F-]+\)$$/) {gsub(/[()]/,"",$$i); print $$i; exit}}')
+DISPLAY ?= primary
+SCREENSHOT_DELAY ?= 3
 
 .PHONY: help setup doctor analyze fix build test boot run screenshot clean
 
@@ -20,9 +22,9 @@ help:
 	@echo "  make build       Build the sample for iOS Simulator"
 	@echo "  make test        Run the sample unit tests on an iPhone Simulator"
 	@echo "  make run         Build, boot, install and launch the sample"
-	@echo "  make screenshot  Capture the running sample to $(PROJECT)/duopilot-screenshot.png"
+	@echo "  make screenshot  Capture the primary display to $(PROJECT)/duopilot-screenshot.png"
 	@echo ""
-	@echo "Override PROJECT, SCHEME, BUNDLE_ID or DEVICE_ID for another app."
+	@echo "Override PROJECT, SCHEME, BUNDLE_ID, DEVICE_ID, DISPLAY or SCREENSHOT_DELAY for another app/display."
 
 setup:
 	./setup.sh
@@ -61,7 +63,8 @@ run: build boot
 	xcrun simctl launch $(DEVICE_ID) $(BUNDLE_ID)
 
 screenshot: run
-	xcrun simctl io $(DEVICE_ID) screenshot $(PROJECT)/duopilot-screenshot.png
+	@sleep $(SCREENSHOT_DELAY)
+	xcrun simctl io $(DEVICE_ID) screenshot --display $(DISPLAY) $(PROJECT)/duopilot-screenshot.png
 	@echo "Screenshot: $(PROJECT)/duopilot-screenshot.png"
 
 clean:
